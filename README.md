@@ -1,1 +1,5 @@
-# _knowledge_management_project_univalle
+# Gestión del conocimiento
+## Universidad del Valle
+## Cali, 2017
+
+Aquí van a estar almacenados todos los scripts
