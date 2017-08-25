@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "library(tidyverse)\nlibrary(foreign)\n\nkm_data <- read.spss(file = \"../_data/Base GConocimiento PymeS  Valle_2017.sav\", to.data.frame = T, use.value.labels = T) # F\nnames(km_data)\n\n# Aprendizaje\naprendizaje <- km_data %>% dplyr::select(P5_4, P5_5, P6_1, P6_2, P6_5, P7_2, P8_1, P13_13:P13_16)\naprendizaje %>% glimpse\n\noptions(warn=-1)\np.chisq = matrix(0, nrow=ncol(aprendizaje), ncol=ncol(aprendizaje), byrow=T)\nfor(i in 1:ncol(aprendizaje)){\n  for(j in 1:ncol(aprendizaje)){\n    p.chisq[i,j] = round(chisq.test(aprendizaje[,i],aprendizaje[,j])$p.value,3)\n  }\n}; rm(i); rm(j)\n\ndiag(p.chisq) = NA\ncolnames(p.chisq) = colnames(aprendizaje)\nrownames(p.chisq) = colnames(aprendizaje)\n\ncolor_scale = colorRampPalette(c(\"tomato3\",\"lightyellow\",\"lightseagreen\"), space=\"rgb\")(50)\n# png('./_results/chi_test.png', height = 7, width = 7, units = \"in\", res = 300)\nheatmap.2(p.chisq,\n          main=\"Independence test\",\n          key.title=\"Chi-square test\",\n          key.xlab=\"p-value\",\n          Rowv=NULL,\n          Colv=NULL,\n          col=color_scale,\n          linecol=NULL,\n          tracecol=NULL,\n          density.info=\"density\",\n          denscol=\"blue\",\n          margins=c(11,11))\n# dev.off(); rm(catVar, p.chisq, color_scale)\n\n",
+    "created" : 1503615934918.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2117597611",
+    "id" : "9BA23C8A",
+    "lastKnownWriteTime" : 1503617730,
+    "last_content_update" : 1503617730854,
+    "path" : "D:/ToBackup/repositories/personal/Statistical_consulting/_knowledge_management/_scripts/loading_and_exploring_data.R",
+    "project_path" : "loading_and_exploring_data.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
