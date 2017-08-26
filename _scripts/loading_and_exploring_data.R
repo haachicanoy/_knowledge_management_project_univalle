@@ -59,6 +59,7 @@ fqTable$Categoria <- factor(fqTable$Categoria, levels = c("Totalmente en desacue
                                "Totalmente de acuerdo"), ordered = T)
 
 # Plot it (SAVE IT!!!!)
+x11()
 gg <- fqTable %>% ggplot(aes(x = Categoria, y = Porcentaje*100)) +
   geom_bar(stat = "identity") +
   xlab("") + ylab("Porcentaje (%)") +
@@ -87,10 +88,10 @@ rownames(p.chisq) = colnames(aprendizaje)
 color_scale = colorRampPalette(c("tomato3","lightyellow","lightseagreen"), space="rgb")(50)
 # png('./_results/chi_test.png', height = 7, width = 7, units = "in", res = 300)
 heatmap.2(p.chisq,
-          main="Independence test",
+          main="Independence test Learning",
           key.title="Chi-square test",
           key.xlab="p-value",
-          Rowv=TRUE,
+          Rowv=F,
           Colv=NULL,
           col=color_scale,
           linecol=NULL,
@@ -99,4 +100,184 @@ heatmap.2(p.chisq,
           denscol="blue",
           margins=c(11,11))
 # dev.off(); rm(catVar, p.chisq, color_scale)
+
+# ------------------------------------------------------- #
+# Pilar Tecnologia 
+# ------------------------------------------------------- #
+tecnologia <- pilares %>% dplyr::select(P3_4, P5_6, P7_4, P7_5, P11_1:P11_5, P13_5, P13_6, P13_7, P13_8)
+tecnologia %>% glimpse
+
+# Analisis descriptivo
+fqTable2 <- tecnologia %>%
+  gather(measure, value) %>%
+  count(measure, value)
+names(fqTable2) <- c("Variable", "Categoria", "Frecuencia")
+fqTable2 <- fqTable2 %>% dplyr::mutate(Porcentaje = Frecuencia/nrow(fqTable2))
+fqTable2$Categoria <- factor(fqTable2$Categoria, levels = c("Totalmente en desacuerdo",
+                                                          "En desacuerdo",
+                                                          "Ni de acuerdo ni en desacuerdo",
+                                                          "De acuerdo",
+                                                          "Totalmente de acuerdo"), ordered = T)
+
+# Plot it (SAVE IT!!!!)
+x11()
+gg <- fqTable2 %>% ggplot(aes(x = Categoria, y = Porcentaje*100)) +
+  geom_bar(stat = "identity") +
+  xlab("") + ylab("Porcentaje (%)") +
+  coord_flip() +
+  facet_wrap(~ Variable, scales = "free") +
+  theme_bw() +
+  theme(strip.text = element_text(size = 12, face = "bold")) +
+  theme(axis.title.x = element_text(size = 13, face = 'bold'),
+        axis.title.y = element_text(size = 13, face = 'bold'),
+        axis.text = element_text(size = 12))
+ggsave("../_results/_descriptive_analysis/frecuencias_tecnologia.png", plot = gg, width = 22, height = 10, units = "in"); rm(fqTable2, gg)
+
+
+options(warn=-1)
+p.chisq2 = matrix(0, nrow=ncol(tecnologia), ncol=ncol(tecnologia), byrow=T)
+for(i in 1:ncol(tecnologia)){
+  for(j in 1:ncol(tecnologia)){
+    p.chisq2[i,j] = round(chisq.test(tecnologia[,i],tecnologia[,j])$p.value,3)
+  }
+}; rm(i); rm(j)
+
+diag(p.chisq2) = NA
+colnames(p.chisq2) = colnames(tecnologia)
+rownames(p.chisq2) = colnames(tecnologia)
+
+color_scale = colorRampPalette(c("tomato3","lightyellow","lightseagreen"), space="rgb")(50)
+# png('./_results/chi_test.png', height = 7, width = 7, units = "in", res = 300)
+heatmap.2(p.chisq2,
+          main="Independence test Technology",
+          key.title="Chi-square test",
+          key.xlab="p-value",
+          Rowv=F,
+          Colv=NULL,
+          col=color_scale,
+          linecol=NULL,
+          tracecol=NULL,
+          density.info="density",
+          denscol="blue",
+          margins=c(11,11))
+
+# ------------------------------------------------------- #
+# Pilar Liderazgo 
+# ------------------------------------------------------- #
+liderazgo <- pilares %>% dplyr::select(P3_1:P3_3, P3_5:P3_8, P8_3, P8_4, P8_5, P13_1, P13_2, P13_3, P13_4)
+liderazgo  %>% glimpse
+
+# Analisis descriptivo
+fqTable3 <- liderazgo  %>%
+  gather(measure, value) %>%
+  count(measure, value)
+names(fqTable3) <- c("Variable", "Categoria", "Frecuencia")
+fqTable3 <- fqTable3 %>% dplyr::mutate(Porcentaje = Frecuencia/nrow(fqTable3))
+fqTable3$Categoria <- factor(fqTable3$Categoria, levels = c("Totalmente en desacuerdo",
+                                                            "En desacuerdo",
+                                                            "Ni de acuerdo ni en desacuerdo",
+                                                            "De acuerdo",
+                                                            "Totalmente de acuerdo"), ordered = T)
+
+# Plot it (SAVE IT!!!!)
+x11()
+gg <- fqTable3 %>% ggplot(aes(x = Categoria, y = Porcentaje*100)) +
+  geom_bar(stat = "identity") +
+  xlab("") + ylab("Porcentaje (%)") +
+  coord_flip() +
+  facet_wrap(~ Variable, scales = "free") +
+  theme_bw() +
+  theme(strip.text = element_text(size = 12, face = "bold")) +
+  theme(axis.title.x = element_text(size = 13, face = 'bold'),
+        axis.title.y = element_text(size = 13, face = 'bold'),
+        axis.text = element_text(size = 12))
+ggsave("../_results/_descriptive_analysis/frecuencias_liderazgo.png", plot = gg, width = 22, height = 10, units = "in"); rm(fqTable3, gg)
+
+
+options(warn=-1)
+p.chisq3 = matrix(0, nrow=ncol(liderazgo), ncol=ncol(liderazgo), byrow=T)
+for(i in 1:ncol(liderazgo)){
+  for(j in 1:ncol(liderazgo)){
+    p.chisq3[i,j] = round(chisq.test(liderazgo[,i],liderazgo[,j])$p.value,3)
+  }
+}; rm(i); rm(j)
+
+diag(p.chisq3) = NA
+colnames(p.chisq3) = colnames(liderazgo)
+rownames(p.chisq3) = colnames(liderazgo)
+
+color_scale = colorRampPalette(c("tomato3","lightyellow","lightseagreen"), space="rgb")(50)
+# png('./_results/chi_test.png', height = 7, width = 7, units = "in", res = 300)
+heatmap.2(p.chisq3,
+          main="Independence test Leadership",
+          key.title="Chi-square test",
+          key.xlab="p-value",
+          Rowv=F,
+          Colv=NULL,
+          col=color_scale,
+          linecol=NULL,
+          tracecol=NULL,
+          density.info="density",
+          denscol="blue",
+          margins=c(11,11))
+
+# ------------------------------------------------------- #
+# Pilar Organizacion 
+# ------------------------------------------------------- #
+organizacion <- pilares %>% dplyr::select(P5_1:P5_3, P6_3, P6_4, P7_1, P7_3, P8_2, P13_9, P13_11)
+organizacion  %>% glimpse
+
+# Analisis descriptivo
+fqTable4 <- organizacion  %>%
+  gather(measure, value) %>%
+  count(measure, value)
+names(fqTable4) <- c("Variable", "Categoria", "Frecuencia")
+fqTable4 <- fqTable4 %>% dplyr::mutate(Porcentaje = Frecuencia/nrow(fqTable4))
+fqTable4$Categoria <- factor(fqTable4$Categoria, levels = c("Totalmente en desacuerdo",
+                                                            "En desacuerdo",
+                                                            "Ni de acuerdo ni en desacuerdo",
+                                                            "De acuerdo",
+                                                            "Totalmente de acuerdo"), ordered = T)
+
+# Plot it (SAVE IT!!!!)
+x11()
+gg <- fqTable4 %>% ggplot(aes(x = Categoria, y = Porcentaje*100)) +
+  geom_bar(stat = "identity") +
+  xlab("") + ylab("Porcentaje (%)") +
+  coord_flip() +
+  facet_wrap(~ Variable, scales = "free") +
+  theme_bw() +
+  theme(strip.text = element_text(size = 12, face = "bold")) +
+  theme(axis.title.x = element_text(size = 13, face = 'bold'),
+        axis.title.y = element_text(size = 13, face = 'bold'),
+        axis.text = element_text(size = 12))
+ggsave("../_results/_descriptive_analysis/frecuencias_organizacion.png", plot = gg, width = 22, height = 10, units = "in"); rm(fqTable4, gg)
+
+
+options(warn=-1)
+p.chisq4 = matrix(0, nrow=ncol(organizacion), ncol=ncol(organizacion), byrow=T)
+for(i in 1:ncol(organizacion)){
+  for(j in 1:ncol(organizacion)){
+    p.chisq4[i,j] = round(chisq.test(organizacion[,i],organizacion[,j])$p.value,3)
+  }
+}; rm(i); rm(j)
+
+diag(p.chisq4) = NA
+colnames(p.chisq4) = colnames(organizacion)
+rownames(p.chisq4) = colnames(organizacion)
+
+color_scale = colorRampPalette(c("tomato3","lightyellow","lightseagreen"), space="rgb")(50)
+# png('./_results/chi_test.png', height = 7, width = 7, units = "in", res = 300)
+heatmap.2(p.chisq4,
+          main="Independence test Organization",
+          key.title="Chi-square test",
+          key.xlab="p-value",
+          Rowv=F,
+          Colv=NULL,
+          col=color_scale,
+          linecol=NULL,
+          tracecol=NULL,
+          density.info="density",
+          denscol="blue",
+          margins=c(11,11))
 
