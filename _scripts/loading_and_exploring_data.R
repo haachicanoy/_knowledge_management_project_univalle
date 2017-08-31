@@ -281,3 +281,54 @@ heatmap.2(p.chisq4,
           denscol="blue",
           margins=c(11,11))
 
+#----------------------------------------------------------#
+# Analisis Canonico Tecnologia / Aprendizaje 
+#----------------------------------------------------------#
+suppressMessages(library(GGally))
+suppressMessages(library(CCA))
+
+ggpairs(aprendizaje,tecnologia)
+matcor(aprendizaje,tecnologia)
+
+cc1 <-cc(tecnologia,aprendizaje) 
+cc1$cor
+cc1[13,11]
+cc2 <- comput(aprendizaje,tecnologia,cc1)
+cc2[13,1]
+
+# tests of canonical dimensions
+ev <- (1 - cc1$cor^2)
+
+n <- dim(aprendizaje)[1]
+p <- length(aprendizaje)
+q <- length(tecnologia)
+k <- min(p, q)
+m <- n - 3/2 - (p + q)/2
+
+w <- rev(cumprod(rev(ev)))
+
+# initialize
+d1 <- d2 <- f <- vector("numeric", k)
+
+for (i in 1:k) {
+  s <- sqrt((p^2 * q^2 - 4)/(p^2 + q^2 - 5))
+  si <- 1/s
+  d1[i] <- p * q
+  d2[i] <- m * s - p * q/2 + 1
+  r <- (1 - w[i]^si)/w[i]^si
+  f[i] <- r * d2[i]/d1[i]
+  p <- p - 1
+  q <- q - 1
+}
+
+pv <- pf(f, d1, d2, lower.tail = FALSE)
+(dmat <- cbind(WilksL = w, F = f, df1 = d1, df2 = d2, p = pv))
+
+# standardized psych canonical coefficients diagonal matrix of apre sd's
+s1 <- diag(sqrt(diag(cov(aprendizaje))))
+s1 %*% cc1$xcoef
+# standardized psych canonical coefficients diagonal matrix of tec sd's
+s2 <- diag(sqrt(diag(cov(tecnologia))))
+s2 %*% cc1$ycoef
+
+
