@@ -22,6 +22,7 @@ suppressMessages(library(polycor))
 suppressMessages(library(psych))
 suppressMessages(library(gplots))
 suppressMessages(library(viridis))
+suppressMessages(library(lsr))
 
 # ------------------------------------------------------- #
 # Loading data
@@ -72,7 +73,7 @@ gg <- fqTable %>% ggplot(aes(x = Categoria, y = Porcentaje*100)) +
         axis.text = element_text(size = 12))
 ggsave("../_results/_descriptive_analysis/frecuencias_aprendizaje.png", plot = gg, width = 22, height = 10, units = "in"); rm(fqTable, gg)
 
-
+# Chi-square test
 options(warn=-1)
 p.chisq = matrix(0, nrow=ncol(aprendizaje), ncol=ncol(aprendizaje), byrow=T)
 for(i in 1:ncol(aprendizaje)){
@@ -86,7 +87,7 @@ colnames(p.chisq) = colnames(aprendizaje)
 rownames(p.chisq) = colnames(aprendizaje)
 
 color_scale = colorRampPalette(c("tomato3","lightyellow","lightseagreen"), space="rgb")(50)
-# png('./_results/chi_test.png', height = 7, width = 7, units = "in", res = 300)
+png(file = '../_results/_descriptive_analysis/chi_square_test_aprendizaje.png', height = 7, width = 7, units = "in", res = 300)
 heatmap.2(p.chisq,
           main="Independence test Learning",
           key.title="Chi-square test",
@@ -99,7 +100,22 @@ heatmap.2(p.chisq,
           density.info="density",
           denscol="blue",
           margins=c(11,11))
-# dev.off(); rm(catVar, p.chisq, color_scale)
+dev.off()#; rm(catVar, p.chisq, color_scale)
+
+# Cramer's V test
+options(warn=-1)
+p.cramer = matrix(0, nrow=ncol(aprendizaje), ncol=ncol(aprendizaje), byrow=T)
+for(i in 1:ncol(aprendizaje)){
+  for(j in 1:ncol(aprendizaje)){
+    p.cramer[i,j] = round(lsr::cramersV(aprendizaje[,i],aprendizaje[,j]),3)
+  }
+}; rm(i); rm(j)
+
+# diag(p.cramer) = NA
+colnames(p.cramer) = colnames(aprendizaje)
+rownames(p.cramer) = colnames(aprendizaje)
+
+corrplot::corrplot(corr = p.cramer, method = "square")
 
 # ------------------------------------------------------- #
 # Pilar Tecnologia 
@@ -287,16 +303,28 @@ heatmap.2(p.chisq4,
 suppressMessages(library(GGally))
 suppressMessages(library(CCA))
 
-ggpairs(aprendizaje,tecnologia)
-matcor(aprendizaje,tecnologia)
+km_data <- read.spss(file = "../_data/Base GConocimiento PymeS  Valle_2017.sav", to.data.frame = T, use.value.labels = F) # F
+aprendizaje <- km_data %>% dplyr::select(P5_4, P5_5, P6_1, P6_2, P6_5, P7_2, P8_1, P13_13:P13_16)
+tecnologia <- km_data %>% dplyr::select(P3_4, P5_6, P7_4, P7_5, P11_1:P11_5, P13_5, P13_6, P13_7, P13_8)
 
-cc1 <-cc(tecnologia,aprendizaje) 
-cc1$cor
-cc1[13,11]
-cc2 <- comput(aprendizaje,tecnologia,cc1)
-cc2[13,1]
+corrplot(cor(cbind(aprendizaje, tecnologia)), method = "square")
 
-# tests of canonical dimensions
+# Y: aprendizaje
+# X: tecnologia
+cc1 <- cc(tecnologia, aprendizaje) 
+cc1$cor[1]
+cc1$cor[1:3]
+
+cc1[3:4]
+
+cc2 <- comput(tecnologia, aprendizaje, cc1)
+cc2[3:6]
+cc2[3:6]$corr.X.xscores %>% View
+cc2[3:6]$corr.Y.yscores %>% View
+
+ggplot(data = data.frame(P7_2 = aprendizaje$P7_2, P7_5 = tecnologia$P7_5), aes(x = P7_2, y = P7_5, size = 28, alpha = .6)) + geom_point()
+
+# Tests of canonical dimensions
 ev <- (1 - cc1$cor^2)
 
 n <- dim(aprendizaje)[1]
@@ -331,4 +359,32 @@ s1 %*% cc1$xcoef
 s2 <- diag(sqrt(diag(cov(tecnologia))))
 s2 %*% cc1$ycoef
 
+#----------------------------------------------------------#
+# Cuantificacion optima de variables
+#----------------------------------------------------------#
+
+library(homals)
+
+### Aprendizaje
+faData   <- all_data[,mtch_fa]
+faHomals <- homals(faData, active=rep(TRUE, ncol(faData)), level='ordinal', sets=list(1:ncol(faData)))
+faQuan   <- faHomals$low.rank # Quantified variables
+faDataqF <- faData
+
+for(i in 1:ncol(faDataqF)){
+  
+  faDataqF[,i] <- as.character(faDataqF[,i])
+  dfQuan <- as.data.frame(faQuan[[i]])
+  
+  for(j in 1:length(rownames(dfQuan))){
+    mtch <- which(faDataqF[,i]==rownames(dfQuan)[j])
+    if(length(mtch)>0){
+      faDataqF[,i][which(faDataqF[,i]==rownames(dfQuan)[j])] <- dfQuan[j,1]
+    }
+  }
+  
+  faDataqF[,i] <- as.numeric(faDataqF[,i])
+  
+}; rm(i,j,mtch)
+rm(faData, faHomals, dfQuan, faQuan)
 
