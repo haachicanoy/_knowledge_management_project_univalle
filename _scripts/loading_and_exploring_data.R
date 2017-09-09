@@ -115,7 +115,9 @@ for(i in 1:ncol(aprendizaje)){
 colnames(p.cramer) = colnames(aprendizaje)
 rownames(p.cramer) = colnames(aprendizaje)
 
+x11()
 corrplot::corrplot(corr = p.cramer, method = "square")
+png(file = '../_results/_descriptive_analysis/cramer_v_test_aprendizaje.png', height = 7, width = 7, units = "in", res = 300)
 
 # ------------------------------------------------------- #
 # Pilar Tecnologia 
@@ -163,7 +165,7 @@ colnames(p.chisq2) = colnames(tecnologia)
 rownames(p.chisq2) = colnames(tecnologia)
 
 color_scale = colorRampPalette(c("tomato3","lightyellow","lightseagreen"), space="rgb")(50)
-# png('./_results/chi_test.png', height = 7, width = 7, units = "in", res = 300)
+png('../_results/chi_test_tecnologia.png', height = 7, width = 7, units = "in", res = 300)
 heatmap.2(p.chisq2,
           main="Independence test Technology",
           key.title="Chi-square test",
@@ -176,6 +178,23 @@ heatmap.2(p.chisq2,
           density.info="density",
           denscol="blue",
           margins=c(11,11))
+
+# Cramer's V test
+options(warn=-1)
+p.cramer2 = matrix(0, nrow=ncol(tecnologia), ncol=ncol(tecnologia), byrow=T)
+for(i in 1:ncol(tecnologia)){
+  for(j in 1:ncol(tecnologia)){
+    p.cramer2[i,j] = round(lsr::cramersV(tecnologia[,i],tecnologia[,j]),3)
+  }
+}; rm(i); rm(j)
+
+# diag(p.cramer) = NA
+colnames(p.cramer2) = colnames(tecnologia)
+rownames(p.cramer2) = colnames(tecnologia)
+
+x11()
+corrplot::corrplot(corr = p.cramer2, method = "square")
+png(file = '../_results/_descriptive_analysis/cramer_v_test_tecnologia.png', height = 7, width = 7, units = "in", res = 300)
 
 # ------------------------------------------------------- #
 # Pilar Liderazgo 
@@ -223,7 +242,7 @@ colnames(p.chisq3) = colnames(liderazgo)
 rownames(p.chisq3) = colnames(liderazgo)
 
 color_scale = colorRampPalette(c("tomato3","lightyellow","lightseagreen"), space="rgb")(50)
-# png('./_results/chi_test.png', height = 7, width = 7, units = "in", res = 300)
+png('../_results/chi_test_liderazgo.png', height = 7, width = 7, units = "in", res = 300)
 heatmap.2(p.chisq3,
           main="Independence test Leadership",
           key.title="Chi-square test",
@@ -236,6 +255,23 @@ heatmap.2(p.chisq3,
           density.info="density",
           denscol="blue",
           margins=c(11,11))
+
+# Cramer's V test
+options(warn=-1)
+p.cramer3 = matrix(0, nrow=ncol(liderazgo), ncol=ncol(liderazgo), byrow=T)
+for(i in 1:ncol(liderazgo)){
+  for(j in 1:ncol(liderazgo)){
+    p.cramer3[i,j] = round(lsr::cramersV(liderazgo[,i],liderazgo[,j]),3)
+  }
+}; rm(i); rm(j)
+
+# diag(p.cramer) = NA
+colnames(p.cramer3) = colnames(liderazgo)
+rownames(p.cramer3) = colnames(liderazgo)
+
+x11()
+corrplot::corrplot(corr = p.cramer3, method = "square")
+png(file = '../_results/_descriptive_analysis/cramer_v_test_liderazgo.png', height = 7, width = 7, units = "in", res = 300)
 
 # ------------------------------------------------------- #
 # Pilar Organizacion 
@@ -283,7 +319,7 @@ colnames(p.chisq4) = colnames(organizacion)
 rownames(p.chisq4) = colnames(organizacion)
 
 color_scale = colorRampPalette(c("tomato3","lightyellow","lightseagreen"), space="rgb")(50)
-# png('./_results/chi_test.png', height = 7, width = 7, units = "in", res = 300)
+png('../_results/chi_test_organizacion.png', height = 7, width = 7, units = "in", res = 300)
 heatmap.2(p.chisq4,
           main="Independence test Organization",
           key.title="Chi-square test",
@@ -297,6 +333,24 @@ heatmap.2(p.chisq4,
           denscol="blue",
           margins=c(11,11))
 
+# Cramer's V test
+options(warn=-1)
+p.cramer4 = matrix(0, nrow=ncol(organizacion), ncol=ncol(organizacion), byrow=T)
+for(i in 1:ncol(organizacion)){
+  for(j in 1:ncol(organizacion)){
+    p.cramer4[i,j] = round(lsr::cramersV(organizacion[,i],organizacion[,j]),3)
+  }
+}; rm(i); rm(j)
+
+# diag(p.cramer) = NA
+colnames(p.cramer4) = colnames(organizacion)
+rownames(p.cramer4) = colnames(organizacion)
+
+x11()
+corrplot::corrplot(corr = p.cramer4, method = "square")
+png(file = '../_results/_descriptive_analysis/cramer_v_test_organizacion.png', height = 7, width = 7, units = "in", res = 300)
+
+
 #----------------------------------------------------------#
 # Analisis Canonico Tecnologia / Aprendizaje 
 #----------------------------------------------------------#
@@ -307,10 +361,11 @@ km_data <- read.spss(file = "../_data/Base GConocimiento PymeS  Valle_2017.sav",
 aprendizaje <- km_data %>% dplyr::select(P5_4, P5_5, P6_1, P6_2, P6_5, P7_2, P8_1, P13_13:P13_16)
 tecnologia <- km_data %>% dplyr::select(P3_4, P5_6, P7_4, P7_5, P11_1:P11_5, P13_5, P13_6, P13_7, P13_8)
 
+x11()
 corrplot(cor(cbind(aprendizaje, tecnologia)), method = "square")
 
-# Y: aprendizaje
 # X: tecnologia
+# Y: aprendizaje
 cc1 <- cc(tecnologia, aprendizaje) 
 cc1$cor[1]
 cc1$cor[1:3]
