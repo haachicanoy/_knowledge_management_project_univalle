@@ -87,7 +87,7 @@ colnames(p.chisq) = colnames(aprendizaje)
 rownames(p.chisq) = colnames(aprendizaje)
 
 color_scale = colorRampPalette(c("tomato3","lightyellow","lightseagreen"), space="rgb")(50)
-png(file = '../_results/_descriptive_analysis/chi_square_test_aprendizaje.png', height = 7, width = 7, units = "in", res = 300)
+png('../_results/_descriptive_analysis/chi_square_test_aprendizaje.png', height = 7, width = 7, units = "in", res = 300)
 heatmap.2(p.chisq,
           main="Independence test Learning",
           key.title="Chi-square test",
@@ -414,6 +414,13 @@ s1 %*% cc1$xcoef
 # standardized psych canonical coefficients diagonal matrix of tec sd's
 s2 <- diag(sqrt(diag(cov(tecnologia))))
 s2 %*% cc1$ycoef
+
+#----------------------------------------------------------#
+# Alfa de Cronbach 
+#----------------------------------------------------------#
+
+
+
 
 #----------------------------------------------------------#
 # Cuantificacion optima de variables
