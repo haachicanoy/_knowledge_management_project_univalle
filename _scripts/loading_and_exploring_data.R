@@ -89,7 +89,7 @@ rownames(p.chisq) = colnames(aprendizaje)
 color_scale = colorRampPalette(c("tomato3","lightyellow","lightseagreen"), space="rgb")(50)
 png('../_results/_descriptive_analysis/chi_square_test_aprendizaje.png', height = 7, width = 7, units = "in", res = 300)
 heatmap.2(p.chisq,
-          main="Independence test Learning",
+          main="Aprendizaje",
           key.title="Chi-square test",
           key.xlab="p-value",
           Rowv=F,
@@ -116,8 +116,9 @@ colnames(p.cramer) = colnames(aprendizaje)
 rownames(p.cramer) = colnames(aprendizaje)
 
 x11()
-corrplot::corrplot(corr = p.cramer, method = "number")
 png(file = '../_results/_descriptive_analysis/cramer_v_test_aprendizaje.png', height = 7, width = 7, units = "in", res = 300)
+corrplot::corrplot(corr = p.cramer, method = "square")
+dev.off()
 
 # ------------------------------------------------------- #
 # Pilar Tecnologia 
@@ -165,9 +166,9 @@ colnames(p.chisq2) = colnames(tecnologia)
 rownames(p.chisq2) = colnames(tecnologia)
 
 color_scale = colorRampPalette(c("tomato3","lightyellow","lightseagreen"), space="rgb")(50)
-png('../_results/chi_test_tecnologia.png', height = 7, width = 7, units = "in", res = 300)
+png('../_results/_descriptive_analysis/chi_test_tecnologia.png', height = 7, width = 7, units = "in", res = 300)
 heatmap.2(p.chisq2,
-          main="Independence test Technology",
+          main="Tecnologia",
           key.title="Chi-square test",
           key.xlab="p-value",
           Rowv=F,
@@ -178,6 +179,7 @@ heatmap.2(p.chisq2,
           density.info="density",
           denscol="blue",
           margins=c(11,11))
+dev.off()
 
 # Cramer's V test
 options(warn=-1)
@@ -193,8 +195,9 @@ colnames(p.cramer2) = colnames(tecnologia)
 rownames(p.cramer2) = colnames(tecnologia)
 
 x11()
-corrplot::corrplot(corr = p.cramer2, method = "square")
 png(file = '../_results/_descriptive_analysis/cramer_v_test_tecnologia.png', height = 7, width = 7, units = "in", res = 300)
+corrplot::corrplot(corr = p.cramer2, method = "square")
+dev.off()
 
 # ------------------------------------------------------- #
 # Pilar Liderazgo 
@@ -242,9 +245,9 @@ colnames(p.chisq3) = colnames(liderazgo)
 rownames(p.chisq3) = colnames(liderazgo)
 
 color_scale = colorRampPalette(c("tomato3","lightyellow","lightseagreen"), space="rgb")(50)
-png('../_results/chi_test_liderazgo.png', height = 7, width = 7, units = "in", res = 300)
+png('../_results/_descriptive_analysis/chi_test_liderazgo.png', height = 7, width = 7, units = "in", res = 300)
 heatmap.2(p.chisq3,
-          main="Independence test Leadership",
+          main="Liderazgo",
           key.title="Chi-square test",
           key.xlab="p-value",
           Rowv=F,
@@ -255,6 +258,7 @@ heatmap.2(p.chisq3,
           density.info="density",
           denscol="blue",
           margins=c(11,11))
+dev.off()
 
 # Cramer's V test
 options(warn=-1)
@@ -270,8 +274,9 @@ colnames(p.cramer3) = colnames(liderazgo)
 rownames(p.cramer3) = colnames(liderazgo)
 
 x11()
-corrplot::corrplot(corr = p.cramer3, method = "number")
 png(file = '../_results/_descriptive_analysis/cramer_v_test_liderazgo.png', height = 7, width = 7, units = "in", res = 300)
+corrplot::corrplot(corr = p.cramer3, method = "square")
+dev.off()
 
 # ------------------------------------------------------- #
 # Pilar Organizacion 
@@ -319,9 +324,9 @@ colnames(p.chisq4) = colnames(organizacion)
 rownames(p.chisq4) = colnames(organizacion)
 
 color_scale = colorRampPalette(c("tomato3","lightyellow","lightseagreen"), space="rgb")(50)
-png('../_results/chi_test_organizacion.png', height = 7, width = 7, units = "in", res = 300)
+png('../_results/_descriptive_analysis/chi_test_organizacion.png', height = 7, width = 7, units = "in", res = 300)
 heatmap.2(p.chisq4,
-          main="Independence test Organization",
+          main="Organizacion",
           key.title="Chi-square test",
           key.xlab="p-value",
           Rowv=F,
@@ -332,6 +337,7 @@ heatmap.2(p.chisq4,
           density.info="density",
           denscol="blue",
           margins=c(11,11))
+dev.off()
 
 # Cramer's V test
 options(warn=-1)
@@ -346,10 +352,9 @@ for(i in 1:ncol(organizacion)){
 colnames(p.cramer4) = colnames(organizacion)
 rownames(p.cramer4) = colnames(organizacion)
 
-
-corrplot::corrplot(corr = p.cramer4, method = "square")
 png(file = '../_results/_descriptive_analysis/cramer_v_test_organizacion.png', height = 7, width = 7, units = "in", res = 300)
-
+corrplot::corrplot(corr = p.cramer4, method = "square")
+dev.off()
 
 #----------------------------------------------------------#
 # Analisis Canonico Tecnologia / Aprendizaje 
