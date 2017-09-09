@@ -116,7 +116,7 @@ colnames(p.cramer) = colnames(aprendizaje)
 rownames(p.cramer) = colnames(aprendizaje)
 
 x11()
-corrplot::corrplot(corr = p.cramer, method = "square")
+corrplot::corrplot(corr = p.cramer, method = "number")
 png(file = '../_results/_descriptive_analysis/cramer_v_test_aprendizaje.png', height = 7, width = 7, units = "in", res = 300)
 
 # ------------------------------------------------------- #
@@ -270,7 +270,7 @@ colnames(p.cramer3) = colnames(liderazgo)
 rownames(p.cramer3) = colnames(liderazgo)
 
 x11()
-corrplot::corrplot(corr = p.cramer3, method = "square")
+corrplot::corrplot(corr = p.cramer3, method = "number")
 png(file = '../_results/_descriptive_analysis/cramer_v_test_liderazgo.png', height = 7, width = 7, units = "in", res = 300)
 
 # ------------------------------------------------------- #
@@ -346,7 +346,7 @@ for(i in 1:ncol(organizacion)){
 colnames(p.cramer4) = colnames(organizacion)
 rownames(p.cramer4) = colnames(organizacion)
 
-x11()
+
 corrplot::corrplot(corr = p.cramer4, method = "square")
 png(file = '../_results/_descriptive_analysis/cramer_v_test_organizacion.png', height = 7, width = 7, units = "in", res = 300)
 
@@ -377,6 +377,7 @@ cc2[3:6]
 cc2[3:6]$corr.X.xscores %>% View
 cc2[3:6]$corr.Y.yscores %>% View
 
+x11()
 ggplot(data = data.frame(P7_2 = aprendizaje$P7_2, P7_5 = tecnologia$P7_5), aes(x = P7_2, y = P7_5, size = 28, alpha = .6)) + geom_point()
 
 # Tests of canonical dimensions
@@ -421,7 +422,7 @@ s2 %*% cc1$ycoef
 library(homals)
 
 ### Aprendizaje
-faData   <- all_data[,mtch_fa]
+faData <- aprendizaje
 faHomals <- homals(faData, active=rep(TRUE, ncol(faData)), level='ordinal', sets=list(1:ncol(faData)))
 faQuan   <- faHomals$low.rank # Quantified variables
 faDataqF <- faData
@@ -442,4 +443,7 @@ for(i in 1:ncol(faDataqF)){
   
 }; rm(i,j,mtch)
 rm(faData, faHomals, dfQuan, faQuan)
+
+x11()
+corrplot(cor(cbind(faDataqF)), method = "number")
 
