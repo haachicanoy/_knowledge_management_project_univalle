@@ -23,6 +23,7 @@ suppressMessages(library(psych))
 suppressMessages(library(gplots))
 suppressMessages(library(viridis))
 suppressMessages(library(lsr))
+suppressMessages(library(DescTools))
 
 # ------------------------------------------------------- #
 # Loading data
@@ -47,25 +48,56 @@ pilares %>% str
 aprendizaje <- pilares %>% dplyr::select(P5_4, P5_5, P6_1, P6_2, P6_5, P7_2, P8_1, P13_13:P13_16)
 aprendizaje %>% glimpse
 
+cat.metrics <- function(var, var.name){
+  mode.var <- DescTools::Mode(x = var)[1]
+  entropy.var <- DescTools::Entropy(x = table(var), base = exp(1))/DescTools::Entropy(x = rep(24.8, 5), base = exp(1))
+  results <- data.frame(Variable = var.name, Mode = mode.var, Entropy = entropy.var)
+  return(results)
+}
+
+varList <- pilares %>% names %>% unique
+varMetrics <- lapply(1:length(varList), function(i){
+  var.name <- varList[i]
+  eval(parse(text = paste0('var <- pilares$', varList[i])))
+  return(cat.metrics(var = var, var.name = var.name))
+})
+varMetrics <- do.call(rbind, varMetrics)
+varMetrics %>% ggplot(aes(x = reorder(Variable, -Entropy), y = Entropy)) + geom_bar(stat = "identity") +
+  coord_flip() + theme_bw()
+
+hist(varMetrics$Entropy)
+
+
+# Entropy
+DescTools::Entropy(x = table(aprendizaje$P5_4), base = exp(1))/DescTools::Entropy(x = rep(24.8, 5), base = exp(1))
+DescTools::Entropy(x = table(aprendizaje$P13_16), base = exp(1))/DescTools::Entropy(x = rep(24.8, 5), base = exp(1))
+DescTools::Entropy(x = table(aprendizaje$P7_2), base = exp(1))/DescTools::Entropy(x = rep(24.8, 5), base = exp(1))
+DescTools::Entropy(x = table(aprendizaje$P6_1), base = exp(1))/DescTools::Entropy(x = rep(24.8, 5), base = exp(1))
+
 # Analisis descriptivo
 fqTable <- aprendizaje %>%
   gather(measure, value) %>%
   count(measure, value)
 names(fqTable) <- c("Variable", "Categoria", "Frecuencia")
-fqTable <- fqTable %>% dplyr::mutate(Porcentaje = Frecuencia/nrow(fqTable))
+fqTable <- fqTable %>% dplyr::mutate(Porcentaje = Frecuencia/nrow(aprendizaje))
 fqTable$Categoria <- factor(fqTable$Categoria, levels = c("Totalmente en desacuerdo",
                                "En desacuerdo",
                                "Ni de acuerdo ni en desacuerdo",
                                "De acuerdo",
                                "Totalmente de acuerdo"), ordered = T)
+fqTable$Variable <- factor(fqTable$Variable, levels = c("P5_4", "P5_5", "P6_1",
+                                                        "P6_2", "P6_5", "P7_2",
+                                                        "P8_1", paste0("P13_", 13:16)),
+                           ordered = T)
 
 # Plot it (SAVE IT!!!!)
-x11()
+# x11()
 gg <- fqTable %>% ggplot(aes(x = Categoria, y = Porcentaje*100)) +
   geom_bar(stat = "identity") +
   xlab("") + ylab("Porcentaje (%)") +
   coord_flip() +
-  facet_wrap(~ Variable, scales = "free") +
+  scale_y_continuous(limits = c(0, 100)) +
+  facet_wrap(~ Variable) + # , scales = "free"
   theme_bw() +
   theme(strip.text = element_text(size = 12, face = "bold")) +
   theme(axis.title.x = element_text(size = 13, face = 'bold'),
@@ -131,20 +163,25 @@ fqTable2 <- tecnologia %>%
   gather(measure, value) %>%
   count(measure, value)
 names(fqTable2) <- c("Variable", "Categoria", "Frecuencia")
-fqTable2 <- fqTable2 %>% dplyr::mutate(Porcentaje = Frecuencia/nrow(fqTable2))
+fqTable2 <- fqTable2 %>% dplyr::mutate(Porcentaje = Frecuencia/nrow(aprendizaje))
 fqTable2$Categoria <- factor(fqTable2$Categoria, levels = c("Totalmente en desacuerdo",
                                                           "En desacuerdo",
                                                           "Ni de acuerdo ni en desacuerdo",
                                                           "De acuerdo",
                                                           "Totalmente de acuerdo"), ordered = T)
+fqTable2$Variable <- factor(fqTable2$Variable, levels = c("P3_4", "P5_6", "P7_4", "P7_5",
+                                                          paste0("P11_", 1:5),
+                                                          "P13_5", "P13_6", "P13_7", "P13_8"),
+                           ordered = T)
 
 # Plot it (SAVE IT!!!!)
-x11()
+# x11()
 gg <- fqTable2 %>% ggplot(aes(x = Categoria, y = Porcentaje*100)) +
   geom_bar(stat = "identity") +
   xlab("") + ylab("Porcentaje (%)") +
   coord_flip() +
-  facet_wrap(~ Variable, scales = "free") +
+  scale_y_continuous(limits = c(0, 100)) +
+  facet_wrap(~ Variable) +
   theme_bw() +
   theme(strip.text = element_text(size = 12, face = "bold")) +
   theme(axis.title.x = element_text(size = 13, face = 'bold'),
@@ -210,20 +247,25 @@ fqTable3 <- liderazgo  %>%
   gather(measure, value) %>%
   count(measure, value)
 names(fqTable3) <- c("Variable", "Categoria", "Frecuencia")
-fqTable3 <- fqTable3 %>% dplyr::mutate(Porcentaje = Frecuencia/nrow(fqTable3))
+fqTable3 <- fqTable3 %>% dplyr::mutate(Porcentaje = Frecuencia/nrow(liderazgo))
 fqTable3$Categoria <- factor(fqTable3$Categoria, levels = c("Totalmente en desacuerdo",
                                                             "En desacuerdo",
                                                             "Ni de acuerdo ni en desacuerdo",
                                                             "De acuerdo",
                                                             "Totalmente de acuerdo"), ordered = T)
+fqTable3$Variable <- factor(fqTable3$Variable, levels = c(paste0("P3_", 1:3), paste0("P3_", 5:8),
+                                                          "P8_3", "P8_4", "P8_5", "P13_1", "P13_2",
+                                                          "P13_3", "P13_4"),
+                            ordered = T)
 
 # Plot it (SAVE IT!!!!)
-x11()
+# x11()
 gg <- fqTable3 %>% ggplot(aes(x = Categoria, y = Porcentaje*100)) +
   geom_bar(stat = "identity") +
   xlab("") + ylab("Porcentaje (%)") +
   coord_flip() +
-  facet_wrap(~ Variable, scales = "free") +
+  scale_y_continuous(limits = c(0, 100)) +
+  facet_wrap(~ Variable) +
   theme_bw() +
   theme(strip.text = element_text(size = 12, face = "bold")) +
   theme(axis.title.x = element_text(size = 13, face = 'bold'),
@@ -289,20 +331,24 @@ fqTable4 <- organizacion  %>%
   gather(measure, value) %>%
   count(measure, value)
 names(fqTable4) <- c("Variable", "Categoria", "Frecuencia")
-fqTable4 <- fqTable4 %>% dplyr::mutate(Porcentaje = Frecuencia/nrow(fqTable4))
+fqTable4 <- fqTable4 %>% dplyr::mutate(Porcentaje = Frecuencia/nrow(organizacion))
 fqTable4$Categoria <- factor(fqTable4$Categoria, levels = c("Totalmente en desacuerdo",
                                                             "En desacuerdo",
                                                             "Ni de acuerdo ni en desacuerdo",
                                                             "De acuerdo",
                                                             "Totalmente de acuerdo"), ordered = T)
+fqTable4$Variable <- factor(fqTable4$Variable, levels = c(paste0("P5_", 1:3), "P6_3", "P6_4",
+                                                          "P7_1", "P7_3", "P8_2", "P13_9", "P13_11"),
+                            ordered = T)
 
 # Plot it (SAVE IT!!!!)
-x11()
+# x11()
 gg <- fqTable4 %>% ggplot(aes(x = Categoria, y = Porcentaje*100)) +
   geom_bar(stat = "identity") +
   xlab("") + ylab("Porcentaje (%)") +
   coord_flip() +
-  facet_wrap(~ Variable, scales = "free") +
+  scale_y_continuous(limits = c(0, 100)) +
+  facet_wrap(~ Variable) +
   theme_bw() +
   theme(strip.text = element_text(size = 12, face = "bold")) +
   theme(axis.title.x = element_text(size = 13, face = 'bold'),
@@ -365,19 +411,24 @@ suppressMessages(library(CCA))
 km_data <- read.spss(file = "../_data/Base GConocimiento PymeS  Valle_2017.sav", to.data.frame = T, use.value.labels = F) # F
 aprendizaje <- km_data %>% dplyr::select(P5_4, P5_5, P6_1, P6_2, P6_5, P7_2, P8_1, P13_13:P13_16)
 tecnologia <- km_data %>% dplyr::select(P3_4, P5_6, P7_4, P7_5, P11_1:P11_5, P13_5, P13_6, P13_7, P13_8)
+liderazgo <- km_data %>% dplyr::select(P3_1:P3_3, P3_5:P3_8, P8_3, P8_4, P8_5, P13_1, P13_2, P13_3, P13_4)
+organizacion <- km_data %>% dplyr::select(P5_1:P5_3, P6_3, P6_4, P7_1, P7_3, P8_2, P13_9, P13_11)
 
-x11()
+# x11()
 corrplot(cor(cbind(aprendizaje, tecnologia)), method = "square")
+corrplot(cor(cbind(liderazgo, organizacion)), method = "square")
 
 # X: tecnologia
 # Y: aprendizaje
-cc1 <- cc(tecnologia, aprendizaje) 
+cc1 <- cc(tecnologia, aprendizaje)
+cc1 <- cc(liderazgo, organizacion)
 cc1$cor[1]
 cc1$cor[1:3]
 
 cc1[3:4]
 
 cc2 <- comput(tecnologia, aprendizaje, cc1)
+cc2 <- comput(liderazgo, organizacion, cc1)
 cc2[3:6]
 cc2[3:6]$corr.X.xscores %>% View
 cc2[3:6]$corr.Y.yscores %>% View
