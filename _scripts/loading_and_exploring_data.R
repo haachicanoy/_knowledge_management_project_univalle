@@ -411,24 +411,20 @@ suppressMessages(library(CCA))
 km_data <- read.spss(file = "../_data/Base GConocimiento PymeS  Valle_2017.sav", to.data.frame = T, use.value.labels = F) # F
 aprendizaje <- km_data %>% dplyr::select(P5_4, P5_5, P6_1, P6_2, P6_5, P7_2, P8_1, P13_13:P13_16)
 tecnologia <- km_data %>% dplyr::select(P3_4, P5_6, P7_4, P7_5, P11_1:P11_5, P13_5, P13_6, P13_7, P13_8)
-liderazgo <- km_data %>% dplyr::select(P3_1:P3_3, P3_5:P3_8, P8_3, P8_4, P8_5, P13_1, P13_2, P13_3, P13_4)
-organizacion <- km_data %>% dplyr::select(P5_1:P5_3, P6_3, P6_4, P7_1, P7_3, P8_2, P13_9, P13_11)
 
 # x11()
 corrplot(cor(cbind(aprendizaje, tecnologia)), method = "square")
-corrplot(cor(cbind(liderazgo, organizacion)), method = "square")
 
 # X: tecnologia
 # Y: aprendizaje
 cc1 <- cc(tecnologia, aprendizaje)
-cc1 <- cc(liderazgo, organizacion)
 cc1$cor[1]
 cc1$cor[1:3]
 
 cc1[3:4]
 
 cc2 <- comput(tecnologia, aprendizaje, cc1)
-cc2 <- comput(liderazgo, organizacion, cc1)
+#cc2 <- comput(liderazgo, organizacion, cc1)
 cc2[3:6]
 cc2[3:6]$corr.X.xscores %>% View
 cc2[3:6]$corr.Y.yscores %>% View
@@ -470,6 +466,70 @@ s1 %*% cc1$xcoef
 # standardized psych canonical coefficients diagonal matrix of tec sd's
 s2 <- diag(sqrt(diag(cov(tecnologia))))
 s2 %*% cc1$ycoef
+
+#----------------------------------------------------------#
+# Analisis Canonico Liderazgo / Organizacion 
+#----------------------------------------------------------#
+
+liderazgo <- km_data %>% dplyr::select(P3_1:P3_3, P3_5:P3_8, P8_3, P8_4, P8_5, P13_1, P13_2, P13_3, P13_4)
+organizacion <- km_data %>% dplyr::select(P5_1:P5_3, P6_3, P6_4, P7_1, P7_3, P8_2, P13_9, P13_11)
+
+# x11()
+corrplot(cor(cbind(liderazgo, organizacion)), method = "square")
+
+# X: liderazgo
+# Y: organizacion
+cc3 <- cc(liderazgo, organizacion)
+cc3$cor[1]
+cc3$cor[1:3]
+
+cc3[3:4]
+
+
+cc4 <- comput(liderazgo, organizacion, cc3)
+cc4[3:6]
+cc4[3:6]$corr.X.xscores %>% View
+cc4[3:6]$corr.Y.yscores %>% View
+
+#x11()
+#ggplot(data = data.frame(P7_2 = aprendizaje$P7_2, P7_5 = tecnologia$P7_5), aes(x = P7_2, y = P7_5, size = 28, alpha = .6)) + geom_point()
+
+# Tests of canonical dimensions
+ev <- (1 - cc3$cor^2)
+
+n <- dim(organizacion)[1]
+p <- length(organizacion)
+q <- length(liderazgo)
+k <- min(p, q)
+m <- n - 3/2 - (p + q)/2
+
+w <- rev(cumprod(rev(ev)))
+
+# initialize
+d1 <- d2 <- f <- vector("numeric", k)
+
+for (i in 1:k) {
+  s <- sqrt((p^2 * q^2 - 4)/(p^2 + q^2 - 5))
+  si <- 1/s
+  d1[i] <- p * q
+  d2[i] <- m * s - p * q/2 + 1
+  r <- (1 - w[i]^si)/w[i]^si
+  f[i] <- r * d2[i]/d1[i]
+  p <- p - 1
+  q <- q - 1
+}
+
+pv <- pf(f, d1, d2, lower.tail = FALSE)
+(dmat <- cbind(WilksL = w, F = f, df1 = d1, df2 = d2, p = pv))
+
+# standardized psych canonical coefficients diagonal matrix of apre sd's
+s1 <- diag(sqrt(diag(cov(organizacion))))
+s1 %*% cc3$xcoef
+# standardized psych canonical coefficients diagonal matrix of tec sd's
+s2 <- diag(sqrt(diag(cov(liderazgo))))
+s2 %*% cc3$ycoef
+
+
 
 #----------------------------------------------------------#
 # Alfa de Cronbach 
