@@ -402,6 +402,168 @@ png(file = '../_results/_descriptive_analysis/cramer_v_test_organizacion.png', h
 corrplot::corrplot(corr = p.cramer4, method = "square")
 dev.off()
 
+# ------------------------------------------------------- #
+# Pilar Gestion Del Conocimiento
+# ------------------------------------------------------- #
+gconocimiento <- pilares %>% dplyr::select(P9_1:P9_6)
+gconocimiento  %>% glimpse
+
+# Analisis descriptivo
+fqTable5 <- gconocimiento  %>%
+  gather(measure, value) %>%
+  count(measure, value)
+names(fqTable5) <- c("Variable", "Categoria", "Frecuencia")
+fqTable5 <- fqTable5 %>% dplyr::mutate(Porcentaje = Frecuencia/nrow(gconocimiento))
+fqTable5$Categoria <- factor(fqTable5$Categoria, levels = c("Totalmente en desacuerdo",
+                                                            "En desacuerdo",
+                                                            "Ni de acuerdo ni en desacuerdo",
+                                                            "De acuerdo",
+                                                            "Totalmente de acuerdo"), ordered = T)
+fqTable5$Variable <- factor(fqTable5$Variable, levels = c(paste0("P9_", 1:6)),
+                            ordered = T)
+
+# Plot it (SAVE IT!!!!)
+x11()
+gg <- fqTable5 %>% ggplot(aes(x = Categoria, y = Porcentaje*100)) +
+  geom_bar(stat = "identity") +
+  xlab("") + ylab("Porcentaje (%)") +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, 100)) +
+  facet_wrap(~ Variable) +
+  theme_bw() +
+  theme(strip.text = element_text(size = 12, face = "bold")) +
+  theme(axis.title.x = element_text(size = 13, face = 'bold'),
+        axis.title.y = element_text(size = 13, face = 'bold'),
+        axis.text = element_text(size = 12))
+ggsave("../_results/_descriptive_analysis/frecuencias_gestion_conocimiento.png", plot = gg, width = 22, height = 10, units = "in"); rm(fqTable5, gg)
+
+
+options(warn=-1)
+p.chisq5 = matrix(0, nrow=ncol(gconocimiento), ncol=ncol(gconocimiento), byrow=T)
+for(i in 1:ncol(gconocimiento)){
+  for(j in 1:ncol(gconocimiento)){
+    p.chisq5[i,j] = round(chisq.test(gconocimiento[,i],gconocimiento[,j])$p.value,3)
+  }
+}; rm(i); rm(j)
+
+diag(p.chisq5) = NA
+colnames(p.chisq5) = colnames(gconocimiento)
+rownames(p.chisq5) = colnames(gconocimiento)
+
+color_scale = colorRampPalette(c("tomato3","lightyellow","lightseagreen"), space="rgb")(50)
+png('../_results/_descriptive_analysis/chi_test_gestion_conocimiento.png', height = 7, width = 7, units = "in", res = 300)
+heatmap.2(p.chisq5,
+          main="Gestion Conocimiento",
+          key.title="Chi-square test",
+          key.xlab="p-value",
+          Rowv=F,
+          Colv=NULL,
+          col=color_scale,
+          linecol=NULL,
+          tracecol=NULL,
+          density.info="density",
+          denscol="blue",
+          margins=c(11,11))
+dev.off()
+
+# Cramer's V test
+options(warn=-1)
+p.cramer5 = matrix(0, nrow=ncol(gconocimiento), ncol=ncol(gconocimiento), byrow=T)
+for(i in 1:ncol(gconocimiento)){
+  for(j in 1:ncol(gconocimiento)){
+    p.cramer5[i,j] = round(lsr::cramersV(gconocimiento[,i],gconocimiento[,j]),3)
+  }
+}; rm(i); rm(j)
+
+# diag(p.cramer) = NA
+colnames(p.cramer5) = colnames(gconocimiento)
+rownames(p.cramer5) = colnames(gconocimiento)
+
+png(file = '../_results/_descriptive_analysis/cramer_v_test_gestion_conocimiento.png', height = 7, width = 7, units = "in", res = 300)
+corrplot::corrplot(corr = p.cramer5, method = "square")
+dev.off()
+
+# ------------------------------------------------------- #
+# Pilar Tecnologia (aparte)
+# ------------------------------------------------------- #
+tegnologia2 <- pilares %>% dplyr::select(P12_1:P12_10)
+tegnologia2  %>% glimpse
+
+# Analisis descriptivo
+fqTable6 <- tegnologia2  %>%
+  gather(measure, value) %>%
+  count(measure, value)
+names(fqTable6) <- c("Variable", "Categoria", "Frecuencia")
+fqTable6 <- fqTable6 %>% dplyr::mutate(Porcentaje = Frecuencia/nrow(tegnologia2))
+fqTable6$Categoria <- factor(fqTable6$Categoria, levels = c("Totalmente en desacuerdo",
+                                                            "En desacuerdo",
+                                                            "Ni de acuerdo ni en desacuerdo",
+                                                            "De acuerdo",
+                                                            "Totalmente de acuerdo"), ordered = T)
+fqTable6$Variable <- factor(fqTable6$Variable, levels = c(paste0("P12_", 1:10)),
+                            ordered = T)
+
+# Plot it (SAVE IT!!!!)
+x11()
+gg <- fqTable6 %>% ggplot(aes(x = Categoria, y = Porcentaje*100)) +
+  geom_bar(stat = "identity") +
+  xlab("") + ylab("Porcentaje (%)") +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, 100)) +
+  facet_wrap(~ Variable) +
+  theme_bw() +
+  theme(strip.text = element_text(size = 12, face = "bold")) +
+  theme(axis.title.x = element_text(size = 13, face = 'bold'),
+        axis.title.y = element_text(size = 13, face = 'bold'),
+        axis.text = element_text(size = 12))
+ggsave("../_results/_descriptive_analysis/frecuencias_tecnologia_aparte.png", plot = gg, width = 22, height = 10, units = "in"); rm(fqTable6, gg)
+
+
+options(warn=-1)
+p.chisq6 = matrix(0, nrow=ncol(tegnologia2), ncol=ncol(tegnologia2), byrow=T)
+for(i in 1:ncol(tegnologia2)){
+  for(j in 1:ncol(tegnologia2)){
+    p.chisq6[i,j] = round(chisq.test(tegnologia2[,i],tegnologia2[,j])$p.value,3)
+  }
+}; rm(i); rm(j)
+
+diag(p.chisq6) = NA
+colnames(p.chisq6) = colnames(tegnologia2)
+rownames(p.chisq6) = colnames(tegnologia2)
+
+color_scale = colorRampPalette(c("tomato3","lightyellow","lightseagreen"), space="rgb")(50)
+png('../_results/_descriptive_analysis/chi_test_tecnologia_aparte.png', height = 7, width = 7, units = "in", res = 300)
+heatmap.2(p.chisq6,
+          main="Gestion Conocimiento",
+          key.title="Chi-square test",
+          key.xlab="p-value",
+          Rowv=F,
+          Colv=NULL,
+          col=color_scale,
+          linecol=NULL,
+          tracecol=NULL,
+          density.info="density",
+          denscol="blue",
+          margins=c(11,11))
+dev.off()
+
+# Cramer's V test
+options(warn=-1)
+p.cramer6 = matrix(0, nrow=ncol(tegnologia2), ncol=ncol(tegnologia2), byrow=T)
+for(i in 1:ncol(tegnologia2)){
+  for(j in 1:ncol(tegnologia2)){
+    p.cramer6[i,j] = round(lsr::cramersV(tegnologia2[,i],tegnologia2[,j]),3)
+  }
+}; rm(i); rm(j)
+
+# diag(p.cramer) = NA
+colnames(p.cramer6) = colnames(tegnologia2)
+rownames(p.cramer6) = colnames(tegnologia2)
+
+png(file = '../_results/_descriptive_analysis/cramer_v_test_tegnologia_aparte.png', height = 7, width = 7, units = "in", res = 300)
+corrplot::corrplot(corr = p.cramer6, method = "square")
+dev.off()
+
 #----------------------------------------------------------#
 # Analisis Canonico Tecnologia / Aprendizaje 
 #----------------------------------------------------------#
@@ -528,7 +690,6 @@ s1 %*% cc3$xcoef
 # standardized psych canonical coefficients diagonal matrix of tec sd's
 s2 <- diag(sqrt(diag(cov(liderazgo))))
 s2 %*% cc3$ycoef
-
 
 
 #----------------------------------------------------------#
