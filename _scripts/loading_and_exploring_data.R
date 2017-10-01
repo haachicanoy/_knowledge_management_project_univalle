@@ -564,6 +564,120 @@ png(file = '../_results/_descriptive_analysis/cramer_v_test_tegnologia_aparte.pn
 corrplot::corrplot(corr = p.cramer6, method = "square")
 dev.off()
 
+# ------------------------------------------------------- #
+# Aprendizaje, Tecnologia & Gestion del conocimiento
+# ------------------------------------------------------- #
+
+AprTecGC <- pilares %>% dplyr::select(P5_4, P5_5, P6_1, P6_2, P6_5, P7_2, P8_1, P13_13:P13_16, # Aprendizaje
+                                      P3_4, P5_6, P7_4, P7_5, P11_1:P11_5, P13_5, P13_6, P13_7, P13_8, # Tecnologia
+                                      P9_1:P9_6) # Gestion del conocimiento
+
+options(warn = -1)
+p.chisq7 = matrix(0, nrow=ncol(AprTecGC), ncol=ncol(AprTecGC), byrow=T)
+for(i in 1:ncol(AprTecGC)){
+  for(j in 1:ncol(AprTecGC)){
+    p.chisq7[i,j] = round(chisq.test(AprTecGC[,i],AprTecGC[,j])$p.value,3)
+  }
+}; rm(i); rm(j)
+
+diag(p.chisq7) = NA
+colnames(p.chisq7) = colnames(AprTecGC)
+rownames(p.chisq7) = colnames(AprTecGC)
+
+write.csv(x = p.chisq7, file = "../_results/_descriptive_analysis/p_chisq_Apr_Tec_GC.csv", row.names = T)
+
+color_scale = colorRampPalette(c("tomato3","lightyellow","lightseagreen"), space="rgb")(50)
+png('../_results/_descriptive_analysis/chi_test_apr_tec_GC.png', height = 7, width = 7, units = "in", res = 300)
+heatmap.2(p.chisq7,
+          main = "Aprendizaje, Tecnologia,\nGestion Conocimiento",
+          key.title = "Chi-square test",
+          key.xlab = "p-value",
+          Rowv = F,
+          Colv = NULL,
+          col = color_scale,
+          linecol = NULL,
+          tracecol = NULL,
+          density.info = "density",
+          denscol = "blue",
+          margins = c(11,11))
+dev.off()
+
+# Cramer's V test
+options(warn = -1)
+p.cramer7 = matrix(0, nrow = ncol(AprTecGC), ncol = ncol(AprTecGC), byrow = T)
+for(i in 1:ncol(AprTecGC)){
+  for(j in 1:ncol(AprTecGC)){
+    p.cramer7[i,j] = round(lsr::cramersV(AprTecGC[,i],AprTecGC[,j]),3)
+  }
+}; rm(i); rm(j)
+
+# diag(p.cramer) = NA
+colnames(p.cramer7) = colnames(AprTecGC)
+rownames(p.cramer7) = colnames(AprTecGC)
+
+write.csv(x = p.cramer7, file = "../_results/_descriptive_analysis/p_cramer_Apr_Tec_GC.csv", row.names = T)
+
+png(file = '../_results/_descriptive_analysis/cramer_v_test_apr_tec_GC.png', height = 7, width = 7, units = "in", res = 300)
+corrplot::corrplot(corr = p.cramer7, method = "square")
+dev.off()
+
+# ------------------------------------------------------- #
+# Organizacion, Liderazgo & Gestion del conocimiento
+# ------------------------------------------------------- #
+
+OrgLidGC <- pilares %>% dplyr::select(P5_1:P5_3, P6_3, P6_4, P7_1, P7_3, P8_2, P13_9, P13_11, # Organizacion
+                                      P3_1:P3_3, P3_5:P3_8, P8_3, P8_4, P8_5, P13_1, P13_2, P13_3, P13_4, # Liderazgo
+                                      P9_1:P9_6) # Gestion del conocimiento
+
+options(warn = -1)
+p.chisq8 = matrix(0, nrow=ncol(OrgLidGC), ncol=ncol(OrgLidGC), byrow=T)
+for(i in 1:ncol(OrgLidGC)){
+  for(j in 1:ncol(OrgLidGC)){
+    p.chisq8[i,j] = round(chisq.test(OrgLidGC[,i],OrgLidGC[,j])$p.value,3)
+  }
+}; rm(i); rm(j)
+
+diag(p.chisq8) = NA
+colnames(p.chisq8) = colnames(OrgLidGC)
+rownames(p.chisq8) = colnames(OrgLidGC)
+
+write.csv(x = p.chisq8, file = "../_results/_descriptive_analysis/p_chisq_Org_Lid_GC.csv", row.names = T)
+
+color_scale = colorRampPalette(c("tomato3","lightyellow","lightseagreen"), space="rgb")(50)
+png('../_results/_descriptive_analysis/chi_test_org_lid_GC.png', height = 7, width = 7, units = "in", res = 300)
+heatmap.2(p.chisq8,
+          main = "Organizacion, Liderazgo,\nGestion Conocimiento",
+          key.title = "Chi-square test",
+          key.xlab = "p-value",
+          Rowv = F,
+          Colv = NULL,
+          col = color_scale,
+          linecol = NULL,
+          tracecol = NULL,
+          density.info = "density",
+          denscol = "blue",
+          margins = c(11,11))
+dev.off()
+
+# Cramer's V test
+options(warn = -1)
+p.cramer8 = matrix(0, nrow = ncol(OrgLidGC), ncol = ncol(OrgLidGC), byrow = T)
+for(i in 1:ncol(OrgLidGC)){
+  for(j in 1:ncol(OrgLidGC)){
+    p.cramer8[i,j] = round(lsr::cramersV(OrgLidGC[,i],OrgLidGC[,j]),3)
+  }
+}; rm(i); rm(j)
+
+# diag(p.cramer) = NA
+colnames(p.cramer8) = colnames(OrgLidGC)
+rownames(p.cramer8) = colnames(OrgLidGC)
+
+write.csv(x = p.cramer8, file = "../_results/_descriptive_analysis/p_cramer_Org_Lid_GC.csv", row.names = T)
+
+png(file = '../_results/_descriptive_analysis/cramer_v_test_org_lid_GC.png', height = 7, width = 7, units = "in", res = 300)
+corrplot::corrplot(corr = p.cramer8, method = "square")
+dev.off()
+
 #----------------------------------------------------------#
 # Analisis Canonico Tecnologia / Aprendizaje 
 #----------------------------------------------------------#
