@@ -1,9 +1,29 @@
-#--------------------------------------------------------------------------#
-# Structural Equation Modeling
-#--------------------------------------------------------------------------#
+# Gestion del conocimiento - Proyecto Univalle: ajustar modelos PLS-PM
+# H. Achicanoy & C. Saavedra
+# 2017
 
-# load package "plspm"
-library(plspm)
+# R options
+options(warn = -1); options(scipen = 999)
+
+# Load packages
+suppressMessages(library(tidyverse))
+suppressMessages(library(FactoMineR))
+suppressMessages(library(factoextra))
+suppressMessages(library(foreign))
+suppressMessages(library(corrplot))
+suppressMessages(library(polycor))
+suppressMessages(library(psych))
+suppressMessages(library(gplots))
+suppressMessages(library(viridis))
+suppressMessages(library(lsr))
+suppressMessages(library(DescTools))
+suppressMessages(library(plspm))
+
+# ------------------------------------------------------- #
+# Loading data
+# ------------------------------------------------------- #
+km_data <- read.spss(file = "../_data/Base GConocimiento PymeS  Valle_2017.sav", to.data.frame = T, use.value.labels = T) # F
+names(km_data)
 
 #---------------------------------------------------------------------------------------------#
 # pilares  
