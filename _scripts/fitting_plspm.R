@@ -73,7 +73,10 @@ km_blocks <- list(1:11, 12:24, 25:30, 31:ncol(km_df))
 km_modes <- c("A", "A", "A", "A")
 
 # Run PLS-PM
-km_pls <- plspm(Data = km_df, path_matrix = km_inner, blocks = km_blocks, modes = km_modes, boot.val = TRUE, br = 1000)
+set.seed(1235)
+km_pls <- plspm(Data = km_df, path_matrix = km_inner,
+                blocks = km_blocks, modes = km_modes,
+                scheme = "path", boot.val = TRUE, br = 1000)
 
 # ------------------------------------------------------- #
 # PLS-PM plots
