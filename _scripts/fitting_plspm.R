@@ -76,7 +76,12 @@ km_modes <- c("A", "A", "A", "A")
 set.seed(1235)
 km_pls <- plspm(Data = km_df, path_matrix = km_inner,
                 blocks = km_blocks, modes = km_modes,
-                scheme = "path", boot.val = TRUE, br = 1000)
+                scheme = "path", boot.val = TRUE, br = 500)
+
+summary1 <- dplyr::data_frame(Response = "Innovacion",
+                              Predictors = "Aprendizaje, Tecnologia, Gestion conocimiento")
+summary1 <- summary1 %>%
+  dplyr::mutate(Model = purrr::map(km_pls %>% list, function(x) x))
 
 # ------------------------------------------------------- #
 # PLS-PM plots
@@ -171,7 +176,15 @@ km_blocks <- list(1:10, 11:24, 25:30, 31:ncol(km_df))
 km_modes <- c("A", "A", "A", "A")
 
 # Run PLS-PM
-km_pls <- plspm(Data = km_df, path_matrix = km_inner, blocks = km_blocks, modes = km_modes, boot.val = TRUE, br = 1000)
+set.seed(1235)
+km_pls <- plspm(Data = km_df, path_matrix = km_inner,
+                blocks = km_blocks, modes = km_modes,
+                scheme = "path", boot.val = TRUE, br = 500)
+
+summary2 <- dplyr::data_frame(Response = "Innovacion",
+                              Predictors = "Organizacion, Liderazgo, Gestion conocimiento")
+summary2 <- summary2 %>%
+  dplyr::mutate(Model = purrr::map(km_pls %>% list, function(x) x))
 
 # ------------------------------------------------------- #
 # PLS-PM plots
@@ -272,7 +285,22 @@ km_blocks <- list(1:11, 12:24, 25:34, 35:48, 49:54, 55:ncol(km_df))
 km_modes <- c("A", "A", "A", "A", "A", "A")
 
 # Run PLS-PM
-km_pls <- plspm(Data = km_df, path_matrix = km_inner, blocks = km_blocks, modes = km_modes, boot.val = TRUE, br = 1000)
+set.seed(1235)
+km_pls <- plspm(Data = km_df, path_matrix = km_inner,
+                blocks = km_blocks, modes = km_modes,
+                scheme = "path", boot.val = TRUE, br = 500)
+
+summary3 <- dplyr::data_frame(Response = "Innovacion",
+                              Predictors = "Aprendizaje, Tecnologia, Organizacion, Liderazgo, Gestion conocimiento")
+summary3 <- summary3 %>%
+  dplyr::mutate(Model = purrr::map(km_pls %>% list, function(x) x))
+
+finalSummary <- rbind(summary1, summary2, summary3)
+rm(summary1, summary2, summary3)
+
+saveRDS(object = finalSummary, file = "../_results/plspm_results.RDS")
+
+finalSummary <- readRDS("../_results/plspm_results.RDS")
 
 # ------------------------------------------------------- #
 # PLS-PM plots
