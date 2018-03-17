@@ -348,6 +348,103 @@ xloads %>% ggplot(aes(x = name, y = value, fill = block)) +
   ggtitle("Crossloadings") +
   xlab("Variables") + ylab("Correlation")
 
+############################################################################
+
+# ------------------------------------------------------- #
+# Model for fitting
+# ------------------------------------------------------- #
+#
+# Transferencia del conocimiento  -
+#                                   -> Gestion conocimiento ---> Innovacion
+# Uso del conocimiento -
+#
+# ------------------------------------------------------- #
+km_df <- km_data %>% dplyr::select(P7_1:P7_5, # Transferencia del conocimiento
+                                   P8_1:P8_5, # Uso del conocimiento
+                                   P9_1:P9_6, # Gestion conocimiento
+                                   P10_1:P10A_11) # Innovacion
+
+km_inner <- matrix(c(0,0,0,0,
+                     0,0,0,0,
+                     1,1,0,0,
+                     0,0,1,0), ncol = 4, byrow = T)
+rownames(km_inner) <- colnames(km_inner) <- c("Transferencia del conocimiento", "Uso del conocimiento", "G.Conocimiento", "Innovacion")
+innerplot(km_inner)
+
+# List of variables
+km_blocks <- list(1:5, 6:10, 11:16, 17:ncol(km_df))
+
+# Modes
+km_modes <- c("A", "A", "A", "A")
+
+# Run PLS-PM
+set.seed(1235)
+km_pls <- plspm(Data = km_df, path_matrix = km_inner,
+                blocks = km_blocks, modes = km_modes,
+                scheme = "path", boot.val = TRUE, br = 500)
+
+summary4 <- dplyr::data_frame(Response = "Innovacion",
+                              Predictors = "Transferencia del conocimiento, Uso del conocimiento, Gestion conocimiento")
+summary4 <- summary4 %>%
+  dplyr::mutate(Model = purrr::map(km_pls %>% list, function(x) x))
+
+# ------------------------------------------------------- #
+# PLS-PM plots
+# ------------------------------------------------------- #
+# Outer model results
+plot(km_pls)
+
+# Inner model results
+plot(km_pls, what = "loadings")
+plot(km_pls, what = "weights")
+
+# Correlation between estimated scores
+pairs(km_pls$scores, pch = 20, lower.panel = panel.smooth)
+cor(km_pls$scores, method = "pearson")
+cor(km_pls$scores, method = "spearman")
+cor(km_pls$scores, method = "kendall")
+
+# Estimated scores distribution
+km_scores <- km_pls$scores %>% as.data.frame
+km_scores <- km_scores %>% tidyr::gather(key = Index, value = Value)
+km_scores %>% ggplot(aes(x = Value, group = Index, colour = Index, fill = Index)) +
+  geom_density(alpha = .5) + facet_wrap(~Index) + theme_bw()
+
+# # setting margin size
+# op = par(mar = c(8, 3, 1, 0.5))
+# # barplots of total effects (direct + indirect)
+# barplot(t(km_pls$path_coefs), border = NA, col = c("#9E9AC8", "#DADAEB"),
+#         las = 2, cex.names = 0.8, cex.axis = 0.8,
+#         legend = c("Direct", "Indirect"),
+#         args.legend = list(x = "top", ncol = 2, border = NA,
+#                            bty = "n", title = "Effects"))
+# # resetting default margins
+# par(op)
+
+# Crossloadings plot
+xloads <- melt(km_pls$crossloadings, id.vars = c("name", "block"), variable_name = "LV")
+xloads %>% ggplot(aes(x = name, y = value, fill = block)) +
+  geom_hline(yintercept = 0, color = "gray75") +
+  geom_hline(yintercept = 0.5, color = "gray70", linetype = 2) +
+  geom_bar(stat = 'identity', position = 'dodge') +
+  facet_wrap(block ~ LV) +
+  theme(axis.text.x = element_text(angle = 90),
+        line = element_blank(),
+        plot.title = element_text(size = 12)) +
+  ggtitle("Crossloadings") +
+  xlab("Variables") + ylab("Correlation")
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
