@@ -384,7 +384,7 @@ km_pls <- plspm(Data = km_df, path_matrix = km_inner,
                 scheme = "path", boot.val = TRUE, br = 500)
 
 summary4 <- dplyr::data_frame(Response = "Innovacion",
-                              Predictors = "Transferencia del conocimiento, Uso del conocimiento, Gestion conocimiento")
+                              Predictors = "Transferencia del conocimiento, Uso del conocimiento, G.Conocimiento")
 summary4 <- summary4 %>%
   dplyr::mutate(Model = purrr::map(km_pls %>% list, function(x) x))
 
