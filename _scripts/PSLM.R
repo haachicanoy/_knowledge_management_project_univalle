@@ -1,3 +1,18 @@
+
+# ------------------------------------------------------- #
+suppressMessages(library(tidyverse))
+suppressMessages(library(FactoMineR))
+suppressMessages(library(factoextra))
+suppressMessages(library(foreign))
+suppressMessages(library(corrplot))
+suppressMessages(library(polycor))
+suppressMessages(library(psych))
+suppressMessages(library(gplots))
+suppressMessages(library(viridis))
+suppressMessages(library(lsr))
+suppressMessages(library(DescTools))
+suppressMessages(library(plspm))
+suppressMessages(library(reshape))
 # ------------------------------------------------------- #
 # Loading data
 # ------------------------------------------------------- #
@@ -20,35 +35,42 @@ pilares %>% str
 # ------------------------------------------------------- #
 #
 # Transferencia del conocimiento  -
-#                                   -
-#                                     -> Gestion conocimiento ---> Innovacion
-#                                   -
+#
+#  Adquisicion Conocimiento Interno  -
+#                                       -> Gestion conocimiento ---> Innovacion
+#  Adquisicion Conocimiento Externo  -
+#
 #     Uso del Conocimiento        -
 #
 # ------------------------------------------------------- #
 
-km_df <- km_data %>% dplyr::select(P7_1:P7_5,     # Transferencia del conocimiento
+km_df <- km_data %>% dplyr::select(P5_1:P5_6,     # Adquisicion Conocimiento Externo
+                                   P6_1:P6_5,     # Adquisicion Conocimiento Interno
+                                   P7_1:P7_5,     # Transferencia del conocimiento
                                    P8_1:P8_5,     # Uso del conocimiento
                                    P9_1:P9_6,     # Gestion conocimiento
                                    P10_1:P10A_11) # Innovacion
 
 # rows of the path matrix
-T.conocimiento = c(0, 0, 0, 0)
-U.conocimiento = c(0, 0, 0, 0)
-G.Conocimiento= c(1, 1, 0, 0)
-Innovacion = c(0, 0, 1, 0)
+C.Externo =      c(0,0,0,0,0,0)
+C.interno =      c(0,0,0,0,0,0)
+T.conocimiento = c(0,0,0,0,0,0)
+U.conocimiento = c(0,0,0,0,0,0)
+G.Conocimiento = c(1,1,1,1,0,0)
+Innovacion =     c(0,0,0,0,1,0)
+
 
 # path matrix (inner model)
-foot_path = rbind(T.conocimiento, U.conocimiento, G.Conocimiento, Innovacion)
+foot_path = rbind(C.Externo, C.interno, T.conocimiento, U.conocimiento, G.Conocimiento, Innovacion)
 
 # add column names
 colnames(foot_path) = rownames(foot_path)
 
 # blocks of indicators (outer model)
-foot_blocks = list(1:5, 6:10, 11:16, 17:ncol(km_df))
+foot_blocks = list(1:6, 7:11, 12:16, 17:21, 22:27, 28:ncol(km_df))
 
 # vector of modes (reflective)
-foot_modes = c("A", "A", "A")
+foot_modes = c("A", "A", "A", "A", "A", "A")
 
 # run plspm analysis
 foot_pls = plspm(km_df, foot_path, foot_blocks, modes = foot_modes)
