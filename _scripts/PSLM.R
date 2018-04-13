@@ -52,25 +52,24 @@ km_df <- km_data %>% dplyr::select(P5_1:P5_6,     # Adquisicion Conocimiento Ext
                                    P10_1:P10A_11) # Innovacion
 
 # rows of the path matrix
-C.Externo =      c(0,0,0,0,0,0)
-C.interno =      c(0,0,0,0,0,0)
-T.conocimiento = c(0,0,0,0,0,0)
-U.conocimiento = c(0,0,0,0,0,0)
-G.Conocimiento = c(1,1,1,1,0,0)
-Innovacion =     c(0,0,0,0,1,0)
+A.Conocimiento = c(0,0,0,0,0)
+T.conocimiento = c(0,0,0,0,0)
+U.conocimiento = c(0,0,0,0,0)
+G.Conocimiento = c(1,1,1,0,0)
+Innovacion =     c(0,0,0,1,0)
 
 
 # path matrix (inner model)
-foot_path = rbind(C.Externo, C.interno, T.conocimiento, U.conocimiento, G.Conocimiento, Innovacion)
+foot_path = rbind(A.Conocimiento, T.conocimiento, U.conocimiento, G.Conocimiento, Innovacion)
 
 # add column names
 colnames(foot_path) = rownames(foot_path)
 
 # blocks of indicators (outer model)
-foot_blocks = list(1:6, 7:11, 12:16, 17:21, 22:27, 28:ncol(km_df))
+foot_blocks = list(1:11, 12:16, 17:21, 22:27, 28:ncol(km_df))
 
 # vector of modes (reflective)
-foot_modes = c("A", "A", "A", "A", "A", "A")
+foot_modes = c("A", "A", "A", "A", "A")
 
 # run plspm analysis
 foot_pls = plspm(km_df, foot_path, foot_blocks, modes = foot_modes)
