@@ -802,7 +802,7 @@ s2 %*% cc3$ycoef
 #----------------------------------------------------------#
 # Alfa de Cronbach 
 #----------------------------------------------------------#
-
+library(Rcmdr)
 suppressMessages(library(nlme))
 suppressMessages(library(MASS))
 suppressMessages(library(multilevel))
@@ -813,22 +813,25 @@ pilares <- km_data %>% select(P3_1:P3_8, P5_1:P9_6, P11_1:P13_16, P22_1:P25_5)
 # Alfa aprendizaje
 aprendizaje <- pilares %>% dplyr::select(P5_4, P5_5, P6_1, P6_2, P6_5, P7_2, P8_1, P13_13:P13_16)
 reliability(cov(aprendizaje[,c("P5_4","P5_5","P6_1","P6_2","P6_5","P7_2",
-                               "P8_1","P13_13","P13_14","P13_15","P13_16")], use="complete.obs"))
+                               "P8_1","P13_13","P13_15","P13_16")], use="complete.obs"))
+
 
 # Alfa tecnologia
 tecnologia <- pilares %>% dplyr::select(P3_4, P5_6, P7_4, P7_5, P11_1:P11_5, P13_5, P13_6, P13_7, P13_8)
-reliability(cov(tecnologia[,c("P3_4", "P5_6", "P7_4", "P7_5", "P11_1", "P11_2", "P11_3", "P11_4", "P11_5", "P13_5", "P13_6", "P13_7", "P13_8")], 
-                use="complete.obs"))
+reliability(cov(tecnologia[,c("P3_4", "P5_6", "P7_4", "P7_5", "P11_1", "P11_2", "P11_3", "P11_4", "P11_5", 
+                                       "P13_5", "P13_6", "P13_7", "P13_8")], use="complete.obs"))
 
 #Alfa Liderazgo
 liderazgo <- pilares %>% dplyr::select(P3_1:P3_3, P3_5:P3_8, P8_3, P8_4, P8_5, P13_1, P13_2, P13_3, P13_4)
-reliability(cov(liderazgo[,c("P3_1", "P3_2", "P3_3", "P3_5", "P3_6", "P3_7", "P3_8", "P8_3", "P8_4", "P8_5", "P13_1", "P13_2", "P13_3", "P13_4")], 
-                use="complete.obs"))
+reliability(cov(liderazgo[,c("P3_1", "P3_2", "P3_3", "P3_5", "P3_6", "P3_7", "P3_8", 
+                             "P8_3", "P8_4", "P8_5", "P13_1", "P13_2", "P13_3", "P13_4")], use="complete.obs"))
 
 #Alfa Orgamizacion 
 organizacion <- pilares %>% dplyr::select(P5_1:P5_3, P6_3, P6_4, P7_1, P7_3, P8_2, P13_9, P13_11)
 reliability(cov(organizacion[,c("P5_1", "P5_2", "P5_3", "P6_3", "P6_4", "P7_1", "P7_3", "P8_2", "P13_9", "P13_11")], 
                 use="complete.obs"))
+
+
 
 #----------------------------------------------------------#
 # Cuantificacion optima de variables

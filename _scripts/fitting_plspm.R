@@ -456,7 +456,9 @@ xloads %>% ggplot(aes(x = name, y = value, fill = block)) +
 ############################################################################
 #------ Liderazgo + Orgaanizacion -> Gestion del Conocnimento ------ #
 # Definir la matrix
-myinner2 = matrix(c(0,0,0,0,0,0,1,1,0),
+myinner2 = matrix(c(0,0,0,
+                    0,0,0,
+                    1,1,0),
                  nrow=3, ncol=3, byrow=TRUE)
 rownames(myinner2) = c("Liderazgo", "Organizacion", "G.Conocimiento")
 colnames(myinner2) = c("Liderazgo", "Organizacion", "G.Conocimiento")
